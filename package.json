@@ -1,0 +1,46 @@
+{
+    "name": "ocr-argent-bank-frontend",
+    "description": "'Connect to a Back End with an API Using React' - OpenClassRooms project",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@reduxjs/toolkit": "^1.9.1",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-redux": "^8.0.5",
+        "react-router-dom": "^6.7.0",
+        "react-scripts": "5.0.1"
+    },
+    "devDependencies": {
+        "@mulekick/eslint-config-muleslint": "^1.0.1"
+    },
+    "scripts": {
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "eject": "react-scripts eject",
+        "live": "docker container run --rm -d --mount type=bind,source=$(realpath build),target=/content,ro=true -p 8080:80 mulekick/serve-static:latest > /tmp/static-container-id",
+        "die": "docker container stop $(cat /tmp/static-container-id) && rm /tmp/static-container-id"
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "engines": {
+        "node": ">=16.16.0",
+        "npm": ">=8.15.1"
+    },
+    "author": "mulekick <moolekick@gmail.com> (https://github.com/mulekick)",
+    "license": "MIT",
+    "repository": {},
+    "bugs": {},
+    "homepage": "https://mulekick.github.io/ocr-argent-bank-frontend/"
+}
