@@ -37,6 +37,29 @@ const
             return payload;
         }
     ),
+    // perform async request to server to update user profile ...
+    update = createAsyncThunk(
+        `userSession/update`,
+        async fullname => {
+            const
+                // read new fullname and token
+                {firstName, lastName, token} = fullname,
+                // async authentication request
+                readable = await fetch(`http://192.168.1.26:3001/api/v1/user/profile`, {
+                    method: `PUT`,
+                    headers: {
+                        Authorization: `Bearer ${ token }`,
+                        "Content-Type": `application/x-www-form-urlencoded`
+                    },
+                    // eslint-disable-next-line node/prefer-global/url-search-params
+                    body: new URLSearchParams(`firstName=${ firstName }&lastName=${ lastName }`)
+                }),
+                // read response
+                payload = await readable.json();
+            // the returned value becomes the `fulfilled` action payload
+            return payload;
+        }
+    ),
     // create a slice to manage the user session
     userSessionSlice = createSlice({
         // slice name
@@ -61,13 +84,14 @@ const
         // external reducers (import actions and create reducers for the slice)
         extraReducers: builder => {
             builder
+                // login promise states ...
                 .addCase(login.fulfilled, (state, action) => {
                     // update
                     state.loggedIn = true;
                     state.sessionToken = action.payload.body.token;
                 })
                 .addCase(login.rejected, (state, action) => {
-                    // rest to initial state
+                    // reset to initial state
                     state.loggedIn = false;
                     state.sessionToken = null;
                 })
@@ -78,7 +102,18 @@ const
                     state.lastName = action.payload.body.lastName;
                 })
                 .addCase(profile.rejected, (state, action) => {
-                    // rest to initial state
+                    // reset to initial state
+                    state.firstName = null;
+                    state.lastName = null;
+                })
+                // update promise states ...
+                .addCase(update.fulfilled, (state, action) => {
+                    // update
+                    state.firstName = action.payload.body.firstName;
+                    state.lastName = action.payload.body.lastName;
+                })
+                .addCase(update.rejected, (state, action) => {
+                    // reset to initial state
                     state.firstName = null;
                     state.lastName = null;
                 });
@@ -92,4 +127,4 @@ const
     selectUserSession = state => state.session;
 
 // action creators and slice reducer are now available for export.
-export {login, logout, profile, userSessionReducer, selectUserSession};
+export {login, logout, profile, update, userSessionReducer, selectUserSession};

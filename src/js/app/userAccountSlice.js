@@ -9,7 +9,7 @@ const
                 // async authentication request
                 readable = await fetch(`/ocr-argent-bank-frontend/data/mock.user.accounts.json`, {
                     method: `GET`,
-                    // thiw won't hurt even if it actually does nothing lol
+                    // this won't hurt even if it actually does nothing lol
                     headers: {Authorization: `Bearer ${ token }`}
                 }),
                 // read response
@@ -30,7 +30,7 @@ const
         // reducers for the slice (create reducers and export action creator functions)
         reducers: {
             reset: state => {
-                // rest to initial state
+                // reset to initial state
                 delete state.checking;
                 delete state.savings;
                 delete state.credit;
@@ -49,14 +49,14 @@ const
                     state.credit = credit;
                 })
                 .addCase(info.rejected, (state, action) => {
-                    // rest to initial state
+                    // reset to initial state
                     delete state.checking;
                     delete state.savings;
                     delete state.credit;
                 });
         }
     }),
-    // retrieve the action creator function from the slice reducer (action type : userSession/logout)
+    // retrieve the action creator function from the slice reducer (action type : userAccount/reset)
     {reset} = userAccountSlice.actions,
     // retrieve the global reducer function for the slice
     userAccountReducer = userAccountSlice.reducer,
