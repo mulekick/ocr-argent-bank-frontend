@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: Argent Bank™ - OpenAPI 3.0
+  description: |-
+    API specification for the endpoints used to access the backend services of the Argent Bank™ website.
+    This specification describes the enpoints implementing the accounts transactions API.
+  contact:
+    email: moolekick@gmail.com
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://192.168.1.26:3001/api/v1
+tags:
+  - name: transactions
+    description: endpoints used to retrieve / update accounts transactions
+paths:
+  /transactions/list:
+    post:
+      tags:
+        - transactions
+      summary: account transactions list retrieve
+      description: retrieve all transactions on a given account for an authenticated user
+      security:
+        - bearer-auth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: Successfully retrieved accounts transactions list
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/transaction"
+        '400':
+          description: Error during accounts transactions list retrieval
+        '401':
+          description: Not authorized
+        '404':
+          description: Account not found
+          
+  /transactions/update:
+    put:
+      tags:
+        - transactions
+      summary: account transaction update
+      description: update account transaction details for an authenticated user
+      security:
+        - bearer-auth: []
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/update'
+        required: true
+      responses:
+        '200':
+          description: Successfully updated account transaction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateResponse'
+        '400':
+          description: Error during account transaction details update
+        '401':
+          description: Not authorized
+        '404':
+          description: Account transaction not found
+components:
+  securitySchemes:
+    # authorization header
+    bearer-auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: server-provided json web token
+  schemas:      
+    # account transaction object
+    transaction:
+      type: object
+      properties:
+        date:
+          type: string
+          # UTC format regex validator
+          pattern: '^\d{4}-\d{2}-\d{2}(\s|T)\d{2}:\d{2}:\d{2}\.\d{3}(Z)?$'
+        description:
+          type: string
+        # store value only since currency is stored at account level
+        amount:
+          type: number
+        # store value only since currency is stored at account level
+        balance:
+          type: number
+        # transaction details
+        type:
+          type: string
+          enum:
+            # restrict allowed values
+            - Electronic
+            - Wire transfer
+        category:
+          type: string
+          enum:
+            # restrict allowed values
+            - Food
+            - Drink
+            - Clothing
+        notes:
+          type: string
+    # account transaction update object
+    update:
+      type: object
+      properties:
+        # transaction details
+        type:
+          type: string
+          enum:
+            # restrict allowed values
+            - Electronic
+            - Wire transfer
+        category:
+          type: string
+          enum:
+            # restrict allowed values
+            - Food
+            - Drink
+            - Clothing
+        notes:
+          type: string
+        # we'll use the transaction date to uniquely identify the transaction to update server-side because it's
+        # physically impossible to register 2 transactions on the same account at the exact same timestamp
+        date:
+          type: string
+          # UTC format regex validator
+          pattern: '^\d{4}-\d{2}-\d{2}(\s|T)\d{2}:\d{2}:\d{2}\.\d{3}(Z)?$'
+    # account transaction update response body
+    UpdateResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        body:
+          # account transaction object
+          $ref: '#/components/schemas/transaction'

@@ -1,0 +1,65 @@
+openapi: 3.0.3
+info:
+  title: Argent Bank™ - OpenAPI 3.0
+  description: |-
+    API specification for the endpoints used to access the backend services of the Argent Bank™ website.
+    This specification describes the enpoints implementing the user accounts API.
+  contact:
+    email: moolekick@gmail.com
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://192.168.1.26:3001/api/v1
+tags:
+  - name: account
+    description: endpoints used to retrieve / update user accounts information
+paths:
+  /accounts/list:
+    get:
+      tags:
+        - account
+      summary: user accounts list retrieve
+      description: retrieve accounts list for an authenticated user
+      security:
+        - bearer-auth: []
+      responses:
+        '200':
+          description: Successfully got user accounts list
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/account"
+        '400':
+          description: Error during accounts list retrieval
+        '401':
+          description: Not authorized
+components:
+  securitySchemes:
+    # authorization header
+    bearer-auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: server-provided json web token
+  schemas:      
+    # user account object
+    account:
+      type: object
+      properties:
+        type:
+          type: string
+        number:
+          type: string
+        currency:
+          type: string
+        balance:
+          type: number
+        description:
+          type: string 

@@ -3,6 +3,7 @@ info:
   title: Argent Bank™ - OpenAPI 3.0
   description: |-
     API specification for the endpoints used to access the backend services of the Argent Bank™ website.
+    This specification describes the enpoints implementing the user sessions management API.
   contact:
     email: moolekick@gmail.com
   license:
@@ -17,8 +18,6 @@ servers:
 tags:
   - name: user
     description: endpoints used to retrieve / update user identity information
-  - name: account
-    description: endpoints used to retrieve / update user accounts information
 paths:
   /user/signup:
     post:
@@ -30,7 +29,7 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Signup'
+              $ref: '#/components/schemas/profile'
         required: true
       responses:
         '200':
@@ -38,7 +37,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SignupSuccess'
+                $ref: '#/components/schemas/SignupResponse'
         '400':
           description: Error during signup
   /user/login:
@@ -51,7 +50,7 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Login'
+              $ref: '#/components/schemas/credentials'
         required: true
       responses:
         '200':
@@ -59,7 +58,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginSuccess'
+                $ref: '#/components/schemas/LoginResponse'
         '400':
           description: Error during login
   /user/profile:
@@ -68,21 +67,15 @@ paths:
         - user
       summary: user profile retrieve
       description: retrieve user profile informations for an authenticated user
-      parameters:
-        - name: Authorization
-          in: header
-          description: server-provided json web token
-          required: true
-          schema:
-            type: string
-            pattern: '^Bearer [\w-]*\.[\w-]*\.[\w-]*$'
+      security:
+        - bearer-auth: []
       responses:
         '200':
           description: Successfully got user profile data
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProfileSuccess'
+                $ref: '#/components/schemas/ProfileResponse'
         '400':
           description: Error during profile data retrieval
         '401':
@@ -92,19 +85,13 @@ paths:
         - user
       summary: user profile update
       description: update user profile informations for an authenticated user
-      parameters:
-        - name: Authorization
-          in: header
-          description: server-provided json web token
-          required: true
-          schema:
-            type: string
-            pattern: '^Bearer [\w-]*\.[\w-]*\.[\w-]*$'
+      security:
+        - bearer-auth: []
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Update'
+              $ref: '#/components/schemas/identity'
         required: true
       responses:
         '200':
@@ -112,15 +99,38 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateSuccess'
+                $ref: '#/components/schemas/UpdateResponse'
         '400':
           description: Error during profile data update
         '401':
           description: Not authorized
 components:
-  schemas:
-    # signup request body
-    Signup:
+  securitySchemes:
+    # authorization header
+    bearer-auth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: server-provided json web token
+  schemas:        
+    # user credentials
+    credentials:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    # user identity
+    identity:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    # user profile
+    profile:
       type: object
       properties:
         email:
@@ -130,9 +140,9 @@ components:
         firstName:
           type: string
         lastName:
-          type: string
+          type: string 
     # signup response body
-    SignupSuccess:
+    SignupResponse:
       type: object
       properties:
         status:
@@ -142,16 +152,8 @@ components:
         body:
           # user profile object
           $ref: '#/components/schemas/profile'
-    # login request body
-    Login:
-      type: object
-      properties:
-        email:
-          type: string
-        password:
-          type: string
     # login response body
-    LoginSuccess:
+    LoginResponse:
       type: object
       properties:
         status:
@@ -164,9 +166,9 @@ components:
           properties:
             token:
               type: string
-              pattern: '^Bearer [\w-]*\.[\w-]*\.[\w-]*$'
-    # profile retrieve response
-    ProfileSuccess:
+              pattern: '^[\w-]*\.[\w-]*\.[\w-]*$'
+    # profile retrieve response body
+    ProfileResponse:
       type: object
       properties:
         status:
@@ -176,15 +178,8 @@ components:
         body:
           # user profile object
           $ref: '#/components/schemas/profile'
-    # update request body
-    Update:
-      type: object
-      properties:
-        firstName:
-          type: string
-        lastName:
-          type: string
-    UpdateSuccess:
+    # profile update response body
+    UpdateResponse:
       type: object
       properties:
         status:
@@ -194,19 +189,3 @@ components:
         body:
           # user profile object
           $ref: '#/components/schemas/profile'
-    # user profile object
-    profile:
-      type: object
-      properties:
-        email:
-          type: string
-        password:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        createdAt: 
-          type: string
-        updatedAt: 
-          type: string
