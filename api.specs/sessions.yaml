@@ -1,0 +1,212 @@
+openapi: 3.0.3
+info:
+  title: Argent Bank™ - OpenAPI 3.0
+  description: |-
+    API specification for the endpoints used to access the backend services of the Argent Bank™ website.
+  contact:
+    email: moolekick@gmail.com
+  license:
+    name: MIT
+    url: https://mit-license.org/
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: http://192.168.1.26:3001/api/v1
+tags:
+  - name: user
+    description: endpoints used to retrieve / update user identity information
+  - name: account
+    description: endpoints used to retrieve / update user accounts information
+paths:
+  /user/signup:
+    post:
+      tags:
+        - user
+      summary: user signup
+      description: create a new user profile to access the backend services 
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Signup'
+        required: true
+      responses:
+        '200':
+          description: User successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupSuccess'
+        '400':
+          description: Error during signup
+  /user/login:
+    post:
+      tags:
+        - user
+      summary: user login
+      description: authentify user to the backend services using user credentials
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      responses:
+        '200':
+          description: User successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccess'
+        '400':
+          description: Error during login
+  /user/profile:
+    post:
+      tags:
+        - user
+      summary: user profile retrieve
+      description: retrieve user profile informations for an authenticated user
+      parameters:
+        - name: Authorization
+          in: header
+          description: server-provided json web token
+          required: true
+          schema:
+            type: string
+            pattern: '^Bearer [\w-]*\.[\w-]*\.[\w-]*$'
+      responses:
+        '200':
+          description: Successfully got user profile data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileSuccess'
+        '400':
+          description: Error during profile data retrieval
+        '401':
+          description: Not authorized
+    put:
+      tags:
+        - user
+      summary: user profile update
+      description: update user profile informations for an authenticated user
+      parameters:
+        - name: Authorization
+          in: header
+          description: server-provided json web token
+          required: true
+          schema:
+            type: string
+            pattern: '^Bearer [\w-]*\.[\w-]*\.[\w-]*$'
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Update'
+        required: true
+      responses:
+        '200':
+          description: Successfully updated user profile data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateSuccess'
+        '400':
+          description: Error during profile data update
+        '401':
+          description: Not authorized
+components:
+  schemas:
+    # signup request body
+    Signup:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+    # signup response body
+    SignupSuccess:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        body:
+          # user profile object
+          $ref: '#/components/schemas/profile'
+    # login request body
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    # login response body
+    LoginSuccess:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        body:
+          # JSON web token
+          type: object
+          properties:
+            token:
+              type: string
+              pattern: '^Bearer [\w-]*\.[\w-]*\.[\w-]*$'
+    # profile retrieve response
+    ProfileSuccess:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        body:
+          # user profile object
+          $ref: '#/components/schemas/profile'
+    # update request body
+    Update:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+    UpdateSuccess:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        body:
+          # user profile object
+          $ref: '#/components/schemas/profile'
+    # user profile object
+    profile:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        createdAt: 
+          type: string
+        updatedAt: 
+          type: string

@@ -24,35 +24,27 @@ const
         name: `userAccount`,
         // initial state for the slice
         initialState: {
-            // starting with an empty slice state that will
-            // be updated with data from the mock after login ...
+            // starting with an empty list that will be
+            // updated with data from the mock after login ...
+            list: []
         },
         // reducers for the slice (create reducers and export action creator functions)
         reducers: {
             reset: state => {
                 // reset to initial state
-                delete state.checking;
-                delete state.savings;
-                delete state.credit;
+                state.list = [];
             }
         },
         // external reducers (import actions and create reducers for the slice)
         extraReducers: builder => {
             builder
                 .addCase(info.fulfilled, (state, action) => {
-                    const
-                        // extract properties
-                        {checking, savings, credit} = action.payload;
                     // update
-                    state.checking = checking;
-                    state.savings = savings;
-                    state.credit = credit;
+                    state.list = action.payload;
                 })
                 .addCase(info.rejected, (state, action) => {
                     // reset to initial state
-                    delete state.checking;
-                    delete state.savings;
-                    delete state.credit;
+                    state.list = [];
                 });
         }
     }),
@@ -60,7 +52,7 @@ const
     {reset} = userAccountSlice.actions,
     // retrieve the global reducer function for the slice
     userAccountReducer = userAccountSlice.reducer,
-    // state selector for use session slice
+    // state selector for user account slice
     selectUserAccount = state => state.account;
 
 // action creators and slice reducer are now available for export.

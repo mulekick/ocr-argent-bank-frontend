@@ -12,10 +12,10 @@ const
             {nul} = props,
             // dispatch hook
             dispatch = useDispatch(),
-            // state selector for session management
+            // state selector for user session management
             session = useSelector(selectUserSession),
-            // state selector for account management
-            {checking, savings, credit} = useSelector(selectUserAccount),
+            // state selector for user account management
+            {list} = useSelector(selectUserAccount),
             // store edit mode indication + first name and last name modifications in component state
             [ edit, setEdit ] = useState(false),
             [ firstName, setFirstName ] = useState(null),
@@ -49,7 +49,7 @@ const
         }, [ session.loggedIn ]);
 
         // conditional rendering depending on state value
-        return session.loggedIn && checking && savings && credit ?
+        return session.loggedIn ?
             <main className="main bg-dark">
                 {
                     edit ?
@@ -74,36 +74,28 @@ const
                         </div>
                 }
                 <h2 className="sr-only">Accounts</h2>
-                <section className="account">
-                    <div className="account-content-wrapper">
-                        <h3 className="account-title">{ checking.title }</h3>
-                        <p className="account-amount">{ checking.balance }</p>
-                        <p className="account-amount-description">{ checking.description }</p>
-                    </div>
-                    <div className="account-content-wrapper cta">
-                        <button className="transaction-button">View transactions</button>
-                    </div>
-                </section>
-                <section className="account">
-                    <div className="account-content-wrapper">
-                        <h3 className="account-title">{ savings.title }</h3>
-                        <p className="account-amount">{ savings.balance }</p>
-                        <p className="account-amount-description">{ savings.description }</p>
-                    </div>
-                    <div className="account-content-wrapper cta">
-                        <button className="transaction-button">View transactions</button>
-                    </div>
-                </section>
-                <section className="account">
-                    <div className="account-content-wrapper">
-                        <h3 className="account-title">{ credit.title }</h3>
-                        <p className="account-amount">{ credit.balance }</p>
-                        <p className="account-amount-description">{ credit.description }</p>
-                    </div>
-                    <div className="account-content-wrapper cta">
-                        <button className="transaction-button">View transactions</button>
-                    </div>
-                </section>
+                { /* conditional rendering */}
+                {
+                    list ?
+                        list.map((x, i) => {
+                            const
+                                // extract account informations
+                                {type, number, currency, balance, description} = x;
+
+                            // return section
+                            return <section key={ i } className="account">
+                                <div className="account-content-wrapper">
+                                    <h3 className="account-title">Argent Bank { type } ({ number })</h3>
+                                    <p className="account-amount">{ new Intl.NumberFormat(`en-US`, {style: `currency`, currency: currency}).format(balance) }</p>
+                                    <p className="account-amount-description">{ description }</p>
+                                </div>
+                                <div className="account-content-wrapper cta">
+                                    <button className="transaction-button">View transactions</button>
+                                </div>
+                            </section>;
+                        }) :
+                        null
+                }
             </main> :
             null;
     };

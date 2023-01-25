@@ -1,17 +1,23 @@
-{
-    "checking": {
-        "title": "Argent Bank Checking (x8349)",
-        "balance": "$2,082.79",
+[
+    {
+        "type": "Checking",
+        "number": "x8349",
+        "currency": "USD",
+        "balance": 2082.79,
         "description": "Available Balance"
     },
-    "savings": {
-        "title": "Argent Bank Savings (x6712)",
-        "balance": "$10,928.42",
+    {
+        "type": "Savings",
+        "number": "x6712",
+        "currency": "USD",
+        "balance": 10928.42,
         "description": "Available Balance"
     },
-    "credit": {
-        "title": "Argent Bank Credit Card (x8349)",
-        "balance": "$184.30",
+    {
+        "type": "Credit Card",
+        "number": "x4935",
+        "currency": "USD",
+        "balance": 184.30,
         "description": "Current Balance"
     }
-}
+]

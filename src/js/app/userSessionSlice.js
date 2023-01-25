@@ -123,7 +123,7 @@ const
     {logout} = userSessionSlice.actions,
     // retrieve the global reducer function for the slice
     userSessionReducer = userSessionSlice.reducer,
-    // state selector for use session slice
+    // state selector for user session slice
     selectUserSession = state => state.session;
 
 // action creators and slice reducer are now available for export.
