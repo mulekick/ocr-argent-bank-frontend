@@ -18,8 +18,8 @@ const
             {list} = useSelector(selectUserAccount),
             // store edit mode indication + first name and last name modifications in component state
             [ edit, setEdit ] = useState(false),
-            [ firstName, setFirstName ] = useState(null),
-            [ lastName, setLastName ] = useState(null),
+            [ firstName, setFirstName ] = useState(session.firstName),
+            [ lastName, setLastName ] = useState(session.lastName),
             // form submission handler
             userUpdate = ev => {
                 ev.preventDefault();
@@ -48,6 +48,15 @@ const
         // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [ session.loggedIn ]);
 
+        // retrieve user identity information
+        useEffect(() => {
+            // sync the local state with the global store state
+            setFirstName(session.firstName);
+            setLastName(session.lastName);
+        // trigger the state update once store values are updated
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [ session.firstName, session.lastName ]);
+
         // conditional rendering depending on state value
         return session.loggedIn ?
             <main className="main bg-dark">
@@ -58,8 +67,8 @@ const
                                 <h1>Welcome back</h1>
                                 <div className="name-update">
                                     <span>
-                                        <input type="text" placeholder={ session.firstName } onChange={ e => setFirstName(e.target.value) } required />
-                                        <input type="text" placeholder={ session.lastName } onChange={ e => setLastName(e.target.value) } required />
+                                        <input type="text" value={ firstName } onChange={ e => setFirstName(e.target.value) } required />
+                                        <input type="text" value={ lastName } onChange={ e => setLastName(e.target.value) } required />
                                     </span>
                                     <span>
                                         <button type="submit" className="edit-button">Save</button>
@@ -69,7 +78,7 @@ const
                             </form>
                         </div> :
                         <div className="header">
-                            <h1>Welcome back<br />{ `${ session.firstName } ${ session.lastName }` }!</h1>
+                            <h1>Welcome back<br />{ `${ firstName } ${ lastName }` }!</h1>
                             <button className="edit-button" onClick={ () => setEdit(true) }>Edit Name</button>
                         </div>
                 }
