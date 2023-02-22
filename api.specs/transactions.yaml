@@ -19,66 +19,104 @@ tags:
   - name: transactions
     description: endpoints used to retrieve / update accounts transactions
 paths:
+  # ===================== list all transactions for account =====================
   /transactions/list:
     post:
       tags:
         - transactions
-      summary: account transactions list retrieve
+      summary: list all transactions for account
       description: retrieve all transactions on a given account for an authenticated user
       security:
         - bearer-auth: []
+      # request
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
+              # account number
               type: object
               properties:
-                number:
+                accountNumber:
                   type: string
         required: true
+      # responses
       responses:
         '200':
-          description: Successfully retrieved accounts transactions list
+          description: Successfully retrieved transactions list
           content:
             application/json:
               schema:
                 type: "array"
                 items:
-                  $ref: "#/components/schemas/transaction"
+                  $ref: "#/components/schemas/transactionListEntry"
         '400':
-          description: Error during accounts transactions list retrieval
+          description: Invalid request
         '401':
           description: Not authorized
         '404':
           description: Account not found
-          
-  /transactions/update:
-    put:
+  # ======================== retrieve transaction details =======================
+  /transactions/details:
+    post:
       tags:
         - transactions
-      summary: account transaction update
-      description: update account transaction details for an authenticated user
+      summary: retrieve transaction details
+      description: retrieve the details of a transaction on a given account for an authenticated user
       security:
         - bearer-auth: []
+      # request
       requestBody:
         content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/update'
+              # account number, transaction id
+              type: object
+              properties:
+                accountNumber:
+                  type: string
+                transactionId:
+                  type: string
         required: true
       responses:
         '200':
-          description: Successfully updated account transaction details
+          description: Successfully retrieved transaction details
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateResponse'
+                $ref: '#/components/schemas/transactionDetails'
         '400':
-          description: Error during account transaction details update
+          description: Invalid request
         '401':
           description: Not authorized
         '404':
-          description: Account transaction not found
+          description: Transaction not found
+
+  # =========== update details for an existing transaction for account ==========
+  /transactions/update:
+    put:
+      tags:
+        - transactions
+      summary: update details of an existing transaction
+      description: update the details of an existing transaction on a given account for an authenticated user
+      security:
+        - bearer-auth: []
+      # request
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/transactionDetailsUpdate"
+        required: true
+      # responses
+      responses:
+        '200':
+          description: Successfully updated transaction
+        '400':
+          description: Invalid request
+        '401':
+          description: Not authorized
+        '404':
+          description: Account / transaction not found
 components:
   securitySchemes:
     # authorization header
@@ -87,73 +125,59 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: server-provided json web token
-  schemas:      
-    # account transaction object
-    transaction:
+  schemas:
+    # account transaction list entry
+    transactionListEntry:
       type: object
       properties:
-        date:
+        transactionDate:
           type: string
           # UTC format regex validator
           pattern: '^\d{4}-\d{2}-\d{2}(\s|T)\d{2}:\d{2}:\d{2}\.\d{3}(Z)?$'
-        description:
+        transactionDescription:
           type: string
         # store value only since currency is stored at account level
-        amount:
+        transactionAmount:
           type: number
         # store value only since currency is stored at account level
-        balance:
+        transactionBalance:
           type: number
-        # transaction details
-        type:
+        # unique ID of the transaction
+        transactionId:
+          type: string
+    # transaction details
+    transactionDetails:
+      type: object
+      properties:
+        transactionType:
           type: string
           enum:
             # restrict allowed values
             - Electronic
             - Wire transfer
-        category:
+        transactionCategory:
           type: string
           enum:
             # restrict allowed values
             - Food
             - Drink
             - Clothing
-        notes:
+        transactionNotes:
           type: string
-    # account transaction update object
-    update:
+    # transaction details update
+    transactionDetailsUpdate:
       type: object
       properties:
-        # transaction details
-        type:
+        accountNumber:
           type: string
-          enum:
-            # restrict allowed values
-            - Electronic
-            - Wire transfer
-        category:
+        transactionId:
+          type: string
+        transactionCategory:
           type: string
           enum:
             # restrict allowed values
             - Food
             - Drink
             - Clothing
-        notes:
+        transactionNotes:
           type: string
-        # we'll use the transaction date to uniquely identify the transaction to update server-side because it's
-        # physically impossible to register 2 transactions on the same account at the exact same timestamp
-        date:
-          type: string
-          # UTC format regex validator
-          pattern: '^\d{4}-\d{2}-\d{2}(\s|T)\d{2}:\d{2}:\d{2}\.\d{3}(Z)?$'
-    # account transaction update response body
-    UpdateResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-        message:
-          type: string
-        body:
-          # account transaction object
-          $ref: '#/components/schemas/transaction'

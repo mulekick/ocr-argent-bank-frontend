@@ -89,14 +89,14 @@ const
                         list.map((x, i) => {
                             const
                                 // extract account informations
-                                {type, number, currency, balance, description} = x;
+                                {accountType, accountNumber, accountCurrency, accountBalance, accountDescription} = x;
 
                             // return section
                             return <section key={ i } className="account">
                                 <div className="account-content-wrapper">
-                                    <h3 className="account-title">Argent Bank { type } ({ number })</h3>
-                                    <p className="account-amount">{ new Intl.NumberFormat(`en-US`, {style: `currency`, currency: currency}).format(balance) }</p>
-                                    <p className="account-amount-description">{ description }</p>
+                                    <h3 className="account-title">Argent Bank { accountType } ({ accountNumber })</h3>
+                                    <p className="account-amount">{ new Intl.NumberFormat(`en-US`, {style: `currency`, currency: accountCurrency}).format(accountBalance) }</p>
+                                    <p className="account-amount-description">{ accountDescription }</p>
                                 </div>
                                 <div className="account-content-wrapper cta">
                                     <button className="transaction-button">View transactions</button>

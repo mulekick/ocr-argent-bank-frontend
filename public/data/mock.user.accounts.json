@@ -1,23 +1,23 @@
 [
     {
-        "type": "Checking",
-        "number": "x8349",
-        "currency": "USD",
-        "balance": 2082.79,
-        "description": "Available Balance"
+        "accountType": "Checking",
+        "accountNumber": "x8349",
+        "accountCurrency": "USD",
+        "accountBalance": 2082.79,
+        "accountDescription": "Available Balance"
     },
     {
-        "type": "Savings",
-        "number": "x6712",
-        "currency": "USD",
-        "balance": 10928.42,
-        "description": "Available Balance"
+        "accountType": "Savings",
+        "accountNumber": "x6712",
+        "accountCurrency": "USD",
+        "accountBalance": 10928.42,
+        "accountDescription": "Available Balance"
     },
     {
-        "type": "Credit Card",
-        "number": "x4935",
-        "currency": "USD",
-        "balance": 184.30,
-        "description": "Current Balance"
+        "accountType": "Credit Card",
+        "accountNumber": "x4935",
+        "accountCurrency": "USD",
+        "accountBalance": 184.30,
+        "accountDescription": "Current Balance"
     }
 ]

@@ -53,13 +53,13 @@ components:
     account:
       type: object
       properties:
-        type:
+        accountType:
           type: string
-        number:
+        accountNumber:
           type: string
-        currency:
+        accountCurrency:
           type: string
-        balance:
+        accountBalance:
           type: number
-        description:
+        accountDescription:
           type: string 
